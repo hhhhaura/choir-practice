@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>聖誕詩班練習 · Choir Practice</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <h1>聖誕詩班練習 <span>Choir Practice</span></h1>
+    <nav id="songs" class="songs" aria-label="Songs"></nav>
+  </header>
+
+  <section class="card transport" aria-label="Transport">
+    <div class="now">
+      <div>
+        <div id="songTitle" class="song-title">—</div>
+        <div id="songSub" class="song-sub"></div>
+      </div>
+      <div id="status" class="status">載入中 Loading…</div>
+    </div>
+
+    <div class="seek">
+      <div class="seek-track"><div id="loopZone" class="loop-zone" hidden></div></div>
+      <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Position">
+    </div>
+    <div class="times"><span id="tNow">0:00</span><span id="tEnd">0:00</span></div>
+
+    <div class="controls">
+      <button id="back" class="btn icon" aria-label="Back to start" title="回到開頭">⏮</button>
+      <button id="play" class="btn play" aria-label="Play" disabled>▶</button>
+      <div class="loop-btns">
+        <button id="setA" class="btn small" title="設定起點">A</button>
+        <button id="setB" class="btn small" title="設定終點">B</button>
+        <button id="clearLoop" class="btn small" title="取消循環" disabled>✕ 循環</button>
+      </div>
+    </div>
+
+    <div class="row2">
+      <label class="speed">速度 Speed
+        <div id="speeds" class="seg" role="radiogroup">
+          <button data-speed="1" class="on">100%</button>
+          <button data-speed="0.9">90%</button>
+          <button data-speed="0.8">80%</button>
+          <button data-speed="0.7">70%</button>
+        </div>
+      </label>
+      <label class="master">總音量 Master
+        <input id="master" type="range" min="0" max="100" value="60">
+      </label>
+    </div>
+    <p class="hint">iPhone：請關閉靜音開關才聽得到聲音。 Turn off the silent switch on iPhone.</p>
+  </section>
+
+  <section class="card mixer" aria-label="Mixer">
+    <div class="mixer-head">
+      <h2>聲部 Parts</h2>
+      <div class="quick">
+        <button id="allPiano" class="btn small">琴 Piano</button>
+        <button id="allVocal" class="btn small">人聲 Vocal</button>
+        <button id="reset" class="btn small">重設 Reset</button>
+      </div>
+    </div>
+    <div id="parts"></div>
+    <p class="hint">M = 靜音 mute · S = 獨奏 solo（只聽選到的軌）</p>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
