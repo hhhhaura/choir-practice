@@ -1,4 +1,4 @@
 [
-  { "id": "pushi", "title": "普世歡騰", "subtitle": "Joy to the World", "ready": true },
-  { "id": "pinganye", "title": "平安夜", "subtitle": "Silent Night", "ready": false }
+  { "id": "pinganye", "title": "平安夜", "subtitle": "Silent Night", "ready": true, "default": true },
+  { "id": "pushi", "title": "普世歡騰", "subtitle": "Joy to the World", "ready": true }
 ]

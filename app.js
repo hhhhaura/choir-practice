@@ -226,7 +226,6 @@
   async function selectSong(entry) {
     if (playing) pause();
     song = entry; loopA = loopB = null; pausedAt = 0; buffers = null;
-    store.set('song', entry.id);
     ui.title.textContent = entry.title;
     ui.sub.textContent = entry.subtitle || '';
     [...ui.songs.children].forEach(b => b.classList.toggle('on', b.dataset.id === entry.id));
@@ -308,7 +307,7 @@
       ui.songs.appendChild(b);
     });
     const ready = list.filter(s => s.ready);
-    const saved = ready.find(s => s.id === store.get('song'));
-    if (ready.length) selectSong(saved || ready[0]);
+    const def = ready.find(s => s.default) || ready[0];
+    if (def) selectSong(def);
   }).catch(e => { ui.status.textContent = '載入失敗 Load failed'; console.error(e); });
 })();
