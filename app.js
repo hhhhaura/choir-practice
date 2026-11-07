@@ -133,10 +133,12 @@
 
   // ---------- mixing ----------
   function applyGains() {
-    const anySolo = TRACK_IDS.some(id => tracks[id].solo);
+    const kindOf = id => id.split("-")[1];
+    const soloIn = { piano: false, vocal: false };
+    TRACK_IDS.forEach(id => { if (tracks[id].solo) soloIn[kindOf(id)] = true; });
     TRACK_IDS.forEach(id => {
       const t = tracks[id];
-      const audible = !t.mute && (!anySolo || t.solo);
+      const audible = !t.mute && (!soloIn[kindOf(id)] || t.solo);
       t.gain.gain.setTargetAtTime(audible ? volToGain(t.vol) : 0, ctx.currentTime, 0.015);
       if (t.el) {
         t.el.m.classList.toggle('on', t.mute);
