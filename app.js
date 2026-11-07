@@ -11,7 +11,8 @@
     { key: 'vocal', name: '人聲 Vocal' },
   ];
   const TRACK_IDS = PARTS.flatMap(p => KINDS.map(k => `${p.key}-${k.key}`));
-  const DEFAULT_VOL = 60;
+  const DEFAULT_VOL = { piano: 75, vocal: 60 };
+  const defVol = id => DEFAULT_VOL[id.split("-")[1]];
   const DEFAULT_MASTER = 60;
 
   const $ = id => document.getElementById(id);
@@ -36,7 +37,7 @@
   TRACK_IDS.forEach(id => {
     const g = ctx.createGain();
     g.connect(masterGain);
-    tracks[id] = { id, gain: g, vol: DEFAULT_VOL, mute: false, solo: false, el: null };
+    tracks[id] = { id, gain: g, vol: defVol(id), mute: false, solo: false, el: null };
   });
 
   const cache = new Map();         // `${song}/${speed}` -> {id: AudioBuffer}
@@ -145,15 +146,15 @@
       }
     });
     masterGain.gain.setTargetAtTime(volToGain(+ui.master.value), ctx.currentTime, 0.015);
-    if (song) store.set(`mix2:${song.id}`, Object.fromEntries(TRACK_IDS.map(id => [id, { v: tracks[id].vol, m: tracks[id].mute, s: tracks[id].solo }])));
+    if (song) store.set(`mix3:${song.id}`, Object.fromEntries(TRACK_IDS.map(id => [id, { v: tracks[id].vol, m: tracks[id].mute, s: tracks[id].solo }])));
     store.set('master2', +ui.master.value);
   }
 
   function restoreMix(songId) {
-    const saved = store.get(`mix2:${songId}`, {});
+    const saved = store.get(`mix3:${songId}`, {});
     TRACK_IDS.forEach(id => {
       const s = saved[id] || {};
-      tracks[id].vol = s.v ?? DEFAULT_VOL; tracks[id].solo = !!s.s; tracks[id].mute = !!s.m && !s.s;
+      tracks[id].vol = s.v ?? defVol(id); tracks[id].solo = !!s.s; tracks[id].mute = !!s.m && !s.s;
     });
   }
 
@@ -283,7 +284,7 @@
   ui.allPiano.onclick = () => toggleGroup('piano');
   ui.allVocal.onclick = () => toggleGroup('vocal');
   ui.reset.onclick = () => {
-    TRACK_IDS.forEach(id => Object.assign(tracks[id], { vol: DEFAULT_VOL, mute: false, solo: false }));
+    TRACK_IDS.forEach(id => Object.assign(tracks[id], { vol: defVol(id), mute: false, solo: false }));
     ui.master.value = DEFAULT_MASTER; applyGains();
   };
   document.addEventListener('keydown', e => {
