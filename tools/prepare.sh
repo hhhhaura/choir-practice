@@ -9,29 +9,29 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="$ROOT/audio/$ID"
 mkdir -p "$OUT"
 
-shopt -s nullglob
-for f in "$SRC"/*.mp3 "$SRC"/*.wav; do
-  name="$(basename "$f")"
+# Oldest first, so if two exports map to the same track the newest one wins.
+while IFS= read -r name; do
+  f="$SRC/$name"
   dest=""
   case "$name" in
-    *-S-P.*) dest="S-piano" ;;
-    *-A-P.*) dest="A-piano" ;;
-    *-T-P.*) dest="T-piano" ;;
-    *-B-P.*) dest="B-piano" ;;
     *Soprano*) dest="S-vocal" ;;
     *Alto*)    dest="A-vocal" ;;
     *Tenor*)   dest="T-vocal" ;;
     *Bass*)    dest="B-vocal" ;;
+    *-S-P.*) dest="S-piano" ;;
+    *-A-P.*) dest="A-piano" ;;
+    *-T-P.*) dest="T-piano" ;;
+    *-B-P.*) dest="B-piano" ;;
   esac
   [ -z "$dest" ] && { echo "skip: $name"; continue; }
   echo "$name -> $dest"
   if [[ "$f" == *.mp3 && -z "$TRIM" ]]; then cp "$f" "$OUT/$dest.mp3"
-  elif [[ "$f" == *.mp3 ]]; then ffmpeg -loglevel error -y "${TRIM_ARGS[@]}" -i "$f" -c copy "$OUT/$dest.mp3"
-  else ffmpeg -loglevel error -y -i "$f" -c:a libmp3lame -b:a 192k "$OUT/$dest.mp3"; fi
+  elif [[ "$f" == *.mp3 ]]; then ffmpeg -nostdin -loglevel error -y "${TRIM_ARGS[@]}" -i "$f" -c copy "$OUT/$dest.mp3"
+  else ffmpeg -nostdin -loglevel error -y -i "$f" -c:a libmp3lame -b:a 192k "$OUT/$dest.mp3"; fi
   for pct in 90 80 70; do
     mkdir -p "$OUT/$pct"
     tempo=$(awk "BEGIN{print $pct/100}")
-    ffmpeg -loglevel error -y ${TRIM:+-t "$TRIM"} -i "$f" -filter:a "atempo=$tempo" -c:a libmp3lame -b:a 160k "$OUT/$pct/$dest.mp3"
+    ffmpeg -nostdin -loglevel error -y ${TRIM:+-t "$TRIM"} -i "$f" -filter:a "atempo=$tempo" -c:a libmp3lame -b:a 160k "$OUT/$pct/$dest.mp3"
   done
-done
+done < <(cd "$SRC" && ls -tr | grep -iE '\.(mp3|wav)$')
 echo "done: $OUT"
