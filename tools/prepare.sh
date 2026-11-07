@@ -34,4 +34,14 @@ while IFS= read -r name; do
     ffmpeg -nostdin -loglevel error -y ${TRIM:+-t "$TRIM"} -i "$f" -filter:a "atempo=$tempo" -c:a libmp3lame -b:a 160k "$OUT/$pct/$dest.mp3"
   done
 done < <(cd "$SRC" && ls -tr | grep -iE '\.(mp3|wav)$')
-echo "done: $OUT"
+# Bump this song's version in songs.json so browsers fetch the new audio.
+python3 - "$ROOT/songs.json" "$ID" "$(date +%Y%m%d%H%M%S)" <<'PY'
+import json, sys
+path, sid, ver = sys.argv[1:]
+songs = json.load(open(path, encoding="utf-8"))
+for s in songs:
+    if s["id"] == sid: s["v"] = ver
+with open(path, "w", encoding="utf-8") as f:
+    f.write("[\n" + ",\n".join("  " + json.dumps(s, ensure_ascii=False) for s in songs) + "\n]\n")
+PY
+echo "done: $OUT (songs.json version bumped)"

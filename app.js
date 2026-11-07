@@ -68,7 +68,7 @@
     const key = `${songId}/${s}`;
     if (cache.has(key)) return cache.get(key);
     const entries = await Promise.all(TRACK_IDS.map(async id => {
-      const res = await fetch(`audio/${songId}/${speedDir(s)}${id}.mp3`);
+      const res = await fetch(`audio/${songId}/${speedDir(s)}${id}.mp3?v=${encodeURIComponent(song?.v ?? '')}`);
       if (!res.ok) throw new Error(`${id}: HTTP ${res.status}`);
       const data = await res.arrayBuffer();
       const buf = await new Promise((ok, bad) => ctx.decodeAudioData(data, ok, bad));
@@ -297,7 +297,7 @@
     ui.status.textContent = '請用網址開啟 Open via http://localhost:8765 (not the file)';
     return;
   }
-  fetch('songs.json').then(r => r.json()).then(list => {
+  fetch('songs.json', { cache: 'no-store' }).then(r => r.json()).then(list => {
     list.forEach(s => {
       const b = document.createElement('button');
       b.dataset.id = s.id;
