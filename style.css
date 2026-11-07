@@ -116,6 +116,9 @@ input[type=range] { accent-color: var(--accent); }
 /* ---------- mixer ---------- */
 .mixer-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
 .quick { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn.group .state { font-size: .75rem; margin-left: 4px; padding: 1px 7px; border-radius: 999px; background: var(--line); color: var(--muted); }
+.btn.group.on { border-color: var(--accent); }
+.btn.group.on .state { background: var(--accent); color: var(--accent-ink); }
 .part {
   display: grid; grid-template-columns: 84px 1fr 1fr; gap: 12px; align-items: center;
   padding: 12px; margin-top: 8px; border-radius: 14px; background: var(--soft);

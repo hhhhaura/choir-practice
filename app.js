@@ -147,6 +147,12 @@
         t.el.vol.value = t.vol;
       }
     });
+    [['piano', ui.allPiano], ['vocal', ui.allVocal]].forEach(([k, btn]) => {
+      const on = !TRACK_IDS.filter(id => kindOf(id) === k).every(id => tracks[id].mute);
+      btn.classList.toggle('on', on);
+      btn.setAttribute('aria-pressed', on);
+      btn.querySelector('.state').textContent = on ? '開 On' : '關 Off';
+    });
     masterGain.gain.setTargetAtTime(volToGain(+ui.master.value), ctx.currentTime, 0.015);
     if (song) store.set(`mix3:${song.id}`, Object.fromEntries(TRACK_IDS.map(id => [id, { v: tracks[id].vol, m: tracks[id].mute, s: tracks[id].solo }])));
     store.set('master2', +ui.master.value);
